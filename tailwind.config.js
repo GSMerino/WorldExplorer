@@ -2,6 +2,10 @@
 import defaultTheme from 'tailwindcss/defaultTheme';
 
 export default {
+    content: [
+    "./index.html",             // si usas Vite
+    "./src/**/*.{js,ts,jsx,tsx}" // todos tus componentes React/TS
+  ],
   theme: {
     extend: {
       fontFamily: {
@@ -11,3 +15,5 @@ export default {
   },
   // otros configs...
 }
+
+
