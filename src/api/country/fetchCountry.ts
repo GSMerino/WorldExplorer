@@ -1,0 +1,14 @@
+import { countriesApi } from '../Api';
+import type { Country, CountriesResponse } from '../../store/types/countrieState';
+
+// Campos que necesitamos
+const FIELDS = 'name,cca2,cca3,currencies,capital,flags,region,population,languages,subregion';
+
+
+
+export async function getAllCountries(): Promise<Country[]> {
+    const response = await countriesApi.get<CountriesResponse>( 
+        `/all?fields=${FIELDS}`
+    );
+    return response.data;
+}
