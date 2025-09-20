@@ -2,47 +2,149 @@ import { useEffect } from "react";
 import { useCountrieStore } from "../store/countrieStore/useCountrieStore"
 
 export const CountryList = () => {
-    const { countries, fetchCountries } = useCountrieStore();
+    const { 
+        countries, 
+        loading, 
+        error, 
+        fetchCountries, 
+        currentPage,
+        itemsPerPage,
+        totalPages,
+        getPaginatedCountries,
+        setCurrentPage,
+        setItemsPerPage
+    } = useCountrieStore();
+    
+    // Obtener países de la página actual
+    const paginatedCountries = getPaginatedCountries();
+    const totalCountries = countries.length;
     
     useEffect(() => {
-        fetchCountries(); 
+        fetchCountries();
     }, [fetchCountries]);
+
+    if (loading) return <div className="p-8 text-center">Loading countries...</div>;
+    if (error) return <div className="p-8 text-center text-red-500">Error: {error}</div>;
     
     return(
-        <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6 p-10 lg:p-4 py-9 ">
-            {countries.map(country => (
-                <article 
-                    key={country.cca3 || country.name.common} 
-                    className="flex flex-col min-h-[240px] bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden"
-                >
-                    <div className="w-full  max-h-[300px]">
+        <div>
+            {/* CONTROLES DE PAGINACIÓN */}
+            <div className="p-4 bg-gray-100 flex flex-wrap gap-4 items-center justify-between">
+                <div>
+                    <span className="text-sm text-gray-600">
+                        Showing {((currentPage - 1) * itemsPerPage) + 1} to {" "}
+                        {Math.min(currentPage * itemsPerPage, totalCountries)} of {" "}
+                        {totalCountries} countries
+                    </span>
+                </div>
+                
+                <div className="flex items-center gap-4">
+                    {/* Selector de items por página */}
+                    <div className="flex items-center gap-2">
+                        <label className="text-sm">Paises por pagina:</label>
+                        <select
+                            value={itemsPerPage}
+                            onChange={(e) => setItemsPerPage(Number(e.target.value))}
+                            className="p-1 border rounded"
+                        >
+                            <option value={8}>8</option>
+                            <option value={12}>12</option>
+                            <option value={20}>20</option>
+                            <option value={50}>50</option>
+                        </select>
+                    </div>
+
+                    {/* Controles de página */}
+                    <div className="flex items-center gap-2">
+                        <button
+                            onClick={() => setCurrentPage(currentPage - 1)}
+                            disabled={currentPage === 1}
+                            className="px-3 py-1 border rounded disabled:opacity-50 hover:bg-gray-100"
+                        >
+                            ←
+                        </button>
+                        
+                        <span className="text-sm">
+                            Page {currentPage} of {totalPages}
+                        </span>
+                        
+                        <button
+                            onClick={() => setCurrentPage(currentPage + 1)}
+                            disabled={currentPage === totalPages}
+                            className="px-3 py-1 border rounded disabled:opacity-50 hover:bg-gray-100"
+                        >
+                            →
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            {/* LISTA DE PAÍSES PAGINADOS */}
+            <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-4">
+                {paginatedCountries.map(country => (
+                    <article key={country.cca3} className="bg-white rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow">
                         <img 
                             src={country.flags.png} 
                             alt={country.flags.alt || `Flag of ${country.name.common}`}
-                            className="w-full h-40"
+                            className="w-full h-40 object-cover mb-3 rounded"
                         />
-                    </div>
-
-                    <div className="p-2 flex flex-col gap-10 mb-5 font-oswald">
-                        <div className="flex flex-col gap-4">
-                            <h3 className="text-center font-oswald text-primary-800  text-2xl font-medium">{country.name.common}</h3>
-                            <p className="font-oswald">Capital: {country.capital?.[0]}</p>
-                            <p className="">Idioma: {Object.values(country.languages || {})[0]}</p>
-                            <p>Población 👥: {country.population?.toLocaleString()}</p>
+                        
+                        <h3 className="text-lg font-bold mb-2 text-gray-800">{country.name.common}</h3>
+                        
+                        <div className="space-y-1 text-sm text-gray-600">
+                            <p>🏛️ Capital: {country.capital?.[0] || "N/A"}</p>
+                            <p>🌍 Region: {country.region || "N/A"}</p>
+                            <p>👥 Population: {country.population?.toLocaleString() || "N/A"}</p>
+                            {country.languages && (
+                                <p>🗣️ Language: {Object.values(country.languages)[0]}</p>
+                            )}
                         </div>
+                    </article>
+                ))}
+            </section>
 
-
-                        <div className="flex justify-center">
-                            <button className="font-oswald py-2 px-10 bg-red-500 rounded-xl cursor-pointer">
-                                Ver detalle
-                            </button>
-                        </div>
+            {/* PAGINACIÓN INFERIOR (opcional) */}
+            {totalPages > 1 && (
+                <div className="p-4 bg-gray-100 border-t flex justify-center">
+                    <div className="flex items-center gap-4">
+                        <button
+                            onClick={() => setCurrentPage(1)}
+                            disabled={currentPage === 1}
+                            className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50 hover:bg-blue-600"
+                        >
+                            First
+                        </button>
+                        
+                        <button
+                            onClick={() => setCurrentPage(currentPage - 1)}
+                            disabled={currentPage === 1}
+                            className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50 hover:bg-blue-600"
+                        >
+                            Previous
+                        </button>
+                        
+                        <span className="px-4 py-2 bg-white border rounded">
+                            Page {currentPage} of {totalPages}
+                        </span>
+                        
+                        <button
+                            onClick={() => setCurrentPage(currentPage + 1)}
+                            disabled={currentPage === totalPages}
+                            className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50 hover:bg-blue-600"
+                        >
+                            Next
+                        </button>
+                        
+                        <button
+                            onClick={() => setCurrentPage(totalPages)}
+                            disabled={currentPage === totalPages}
+                            className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50 hover:bg-blue-600"
+                        >
+                            Last
+                        </button>
                     </div>
-
-
-
-                </article>
-            ))}
-        </section>
+                </div>
+            )}
+        </div>
     );
 }
