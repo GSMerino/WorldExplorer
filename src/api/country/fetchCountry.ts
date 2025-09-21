@@ -19,3 +19,11 @@ export async function getCountriesByRegion(region: string): Promise<Country[]> {
     );
     return response.data;
 }
+
+export async function getCountriesByLanguaje(lang: string): Promise<Country[]> {
+    const response = await countriesApi.get<CountriesResponse>(
+        `/lang/${lang}?fields=${FIELDS}`
+    );
+
+    return response.data
+}

@@ -74,4 +74,8 @@ export interface CountriesState {
    //acciones para filtrado por region
    selectedRegion: string
    filterByRegion: (region: string) => Promise<void>;
+
+   //filtrado por idioma
+   selectedLanguage: string;
+   filterByLanguage: (lang: string) => Promise<void>;
 }

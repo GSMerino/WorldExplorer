@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import type { CountriesState } from '../types/countrieState';
-import { getAllCountries, getCountriesByRegion  } from "../../api/country/fetchCountry";
+import { getAllCountries, getCountriesByRegion, getCountriesByLanguaje  } from "../../api/country/fetchCountry";
 
 export const useCountrieStore = create<CountriesState>((set, get) => ({
     countries: [],
@@ -11,6 +11,7 @@ export const useCountrieStore = create<CountriesState>((set, get) => ({
     itemsPerPage: 12,
     totalPages: 1,
     selectedRegion: "all",
+    selectedLanguage: "all",
 
 
     fetchCountries: async () => {
@@ -24,7 +25,9 @@ export const useCountrieStore = create<CountriesState>((set, get) => ({
                 loading: false, 
                 error: null, 
                 currentPage: 1, 
-                totalPages 
+                totalPages,
+                selectedRegion: "all",
+                selectedLanguage: "all" 
             });
 
         } catch (error) {
@@ -86,6 +89,36 @@ export const useCountrieStore = create<CountriesState>((set, get) => ({
             set({ error: errorMessage, loading: false });
         }
 
+    }, 
+
+    filterByLanguage: async (lang: string) => {
+        if (lang === "all") {
+            get().fetchCountries();
+            return;
+        }
+
+        set({ loading: true, error: null, selectedLanguage: lang, selectedRegion: "all" });
+    
+        try {
+            const countries  = await getCountriesByLanguaje(lang)
+            const totalPages = Math.ceil(countries.length / get().itemsPerPage);
+            
+            set({ 
+                countries, 
+                loading: false, 
+                currentPage: 1,
+                totalPages
+            });
+        } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : `Error loading ${lang} speaking countries`;
+            set({ error: errorMessage, loading: false });
+        }
+    
+    
+    
+    
+    
+    
     }
 
 }));

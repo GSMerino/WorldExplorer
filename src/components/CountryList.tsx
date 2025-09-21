@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useCountrieStore } from "../store/countrieStore/useCountrieStore"
 
+
 export const CountryList = () => {
     const { 
         countries, 
@@ -10,11 +11,13 @@ export const CountryList = () => {
         currentPage,
         itemsPerPage,
         selectedRegion,
+        selectedLanguage,
         totalPages,
         getPaginatedCountries,
         setCurrentPage,
         setItemsPerPage,
-        filterByRegion
+        filterByRegion,
+        filterByLanguage
        
     } = useCountrieStore();
     
@@ -41,19 +44,42 @@ export const CountryList = () => {
                     </span>
                 </div>
 
-                 <select
+                <div className="flex flex-col gap-2">
+                    <p>Filtrar por Region:</p>
+                    <select
                         value={selectedRegion}
                         onChange={(e) => filterByRegion(e.target.value)}
-                        className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
-                        <option value="all">All Regions</option>
-                        <option value="europe">Europe</option>
+                        <option value="all">Todas</option>
+                        <option value="europe">Europa</option>
                         <option value="asia">Asia</option>
                         <option value="africa">Africa</option>
-                        <option value="americas">Americas</option>
+                        <option value="americas">America</option>
                         <option value="oceania">Oceania</option>
-                        <option value="antarctic">Antarctic</option>
+                        <option value="antarctic">Antartida</option>
                     </select>
+                </div>
+                <div className="flex flex-col gap-2">
+                    <p>Filtrar por Idioma</p>
+                    <select
+                        value={selectedLanguage}
+                        onChange={(e) => filterByLanguage(e.target.value)}
+                    >       
+                        <option value="all">Todos</option>
+                        <option value="english">English</option>
+                        <option value="spanish">Spanish</option>
+                        <option value="french">French</option>
+                        <option value="german">German</option>
+                        <option value="arabic">Arabic</option>
+                        <option value="chinese">Chinese</option>
+                        <option value="hindi">Hindi</option>
+                        <option value="portuguese">Portuguese</option>
+                        <option value="russian">Russian</option>
+                        <option value="japanese">Japanese</option>
+                    </select>
+                </div>
+
                 
                 <div className="flex items-center gap-4">
                     {/* Selector de items por página */}
@@ -97,6 +123,28 @@ export const CountryList = () => {
 
             </div>
 
+
+            {(selectedRegion !== "all" || selectedLanguage !== "all") && (
+                <div className="p-4 bg-blue-50 border-b">
+                    <div className="max-w-4xl mx-auto flex justify-between items-center">
+                        <p className="text-sm text-blue-800">
+                            📍 Active filters: 
+                            {selectedRegion !== "all" && <span className="font-bold ml-2">Region: {selectedRegion}</span>}
+                            {selectedLanguage !== "all" && <span className="font-bold ml-2">Language: {selectedLanguage}</span>}
+                            <span className="ml-2 text-blue-600">({totalCountries} countries)</span>
+                        </p>
+                        <button 
+                            onClick={fetchCountries}
+                            className="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600"
+                        >
+                            Clear All Filters
+                        </button>
+                    </div>
+                </div>
+            )}
+
+
+
             {/* LISTA DE PAÍSES PAGINADOS */}
             <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-4">
                 {paginatedCountries.map(country => (
@@ -111,7 +159,9 @@ export const CountryList = () => {
                         
                         <div className="space-y-1 text-sm text-gray-600">
                             <p>🏛️ Capital: {country.capital?.[0] || "N/A"}</p>
-                            <p>🌍 Region: {country.region || "N/A"}</p>
+                            <p>
+                                🌍 Region: {country.region || "N/A"}
+                            </p>
                             <p>👥 Population: {country.population?.toLocaleString() || "N/A"}</p>
                             {country.languages && (
                                 <p>🗣️ Language: {Object.values(country.languages)[0]}</p>
