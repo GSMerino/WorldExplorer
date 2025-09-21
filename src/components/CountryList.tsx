@@ -9,10 +9,13 @@ export const CountryList = () => {
         fetchCountries, 
         currentPage,
         itemsPerPage,
+        selectedRegion,
         totalPages,
         getPaginatedCountries,
         setCurrentPage,
-        setItemsPerPage
+        setItemsPerPage,
+        filterByRegion
+       
     } = useCountrieStore();
     
     // Obtener países de la página actual
@@ -27,9 +30,9 @@ export const CountryList = () => {
     if (error) return <div className="p-8 text-center text-red-500">Error: {error}</div>;
     
     return(
-        <div>
+        <section>
             {/* CONTROLES DE PAGINACIÓN */}
-            <div className="p-4 bg-gray-100 flex flex-wrap gap-4 items-center justify-between">
+            <div className="p-4 bg-gray-100 flex flex-wrap gap-4 items-center justify-between rounded-xl">
                 <div>
                     <span className="text-sm text-gray-600">
                         Showing {((currentPage - 1) * itemsPerPage) + 1} to {" "}
@@ -37,6 +40,20 @@ export const CountryList = () => {
                         {totalCountries} countries
                     </span>
                 </div>
+
+                 <select
+                        value={selectedRegion}
+                        onChange={(e) => filterByRegion(e.target.value)}
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                        <option value="all">All Regions</option>
+                        <option value="europe">Europe</option>
+                        <option value="asia">Asia</option>
+                        <option value="africa">Africa</option>
+                        <option value="americas">Americas</option>
+                        <option value="oceania">Oceania</option>
+                        <option value="antarctic">Antarctic</option>
+                    </select>
                 
                 <div className="flex items-center gap-4">
                     {/* Selector de items por página */}
@@ -77,6 +94,7 @@ export const CountryList = () => {
                         </button>
                     </div>
                 </div>
+
             </div>
 
             {/* LISTA DE PAÍSES PAGINADOS */}
@@ -145,6 +163,6 @@ export const CountryList = () => {
                     </div>
                 </div>
             )}
-        </div>
+        </section>
     );
 }

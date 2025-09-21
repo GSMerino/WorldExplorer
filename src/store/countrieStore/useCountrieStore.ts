@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import type { CountriesState } from '../types/countrieState';
-import { getAllCountries } from "../../api/country/fetchCountry";
+import { getAllCountries, getCountriesByRegion  } from "../../api/country/fetchCountry";
 
 export const useCountrieStore = create<CountriesState>((set, get) => ({
     countries: [],
@@ -10,7 +10,7 @@ export const useCountrieStore = create<CountriesState>((set, get) => ({
     currentPage: 1,
     itemsPerPage: 12,
     totalPages: 1,
-
+    selectedRegion: "all",
 
 
     fetchCountries: async () => {
@@ -33,33 +33,59 @@ export const useCountrieStore = create<CountriesState>((set, get) => ({
         }
     },
     
-  // 2. Obtener países paginados
-  getPaginatedCountries: () => {
-    const { countries, currentPage, itemsPerPage } = get();
-    
-    // Calcular índices de paginación
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    
-    // Devolver solo los países de la página actual
-    return countries.slice(startIndex, endIndex);
-  },
+    // 2. Obtener países paginados
+    getPaginatedCountries: () => {
+        const { countries, currentPage, itemsPerPage } = get();
+        
+        // Calcular índices de paginación
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        
+        // Devolver solo los países de la página actual
+        return countries.slice(startIndex, endIndex);
+    },
 
-  // 3. Cambiar página actual
-  setCurrentPage: (page: number) => {
-    set({ currentPage: page });
-  },
+    // 3. Cambiar página actual
+    setCurrentPage: (page: number) => {
+        set({ currentPage: page });
+    },
 
-  // 4. Cambiar items por página
-  setItemsPerPage: (items: number) => {
-    const { countries } = get();
-    const totalPages = Math.ceil(countries.length / items);
-    
-    set({ 
-      itemsPerPage: items, 
-      totalPages,
-      currentPage: 1 // Resetear a página 1 al cambiar items por página
-    });
-  }
+    // 4. Cambiar items por página
+    setItemsPerPage: (items: number) => {
+        const { countries } = get();
+        const totalPages = Math.ceil(countries.length / items);
+        
+        set({ 
+        itemsPerPage: items, 
+        totalPages,
+        currentPage: 1 // Resetear a página 1 al cambiar items por página
+        });
+    },
+
+
+
+    filterByRegion:  async (region: string) => {
+        if(region === "all"){
+            get().fetchCountries();
+            return;
+        }
+
+        try {
+            const countries = await getCountriesByRegion(region);
+            const totalPages = Math.ceil(countries.length / get().itemsPerPage);
+
+            set({ 
+                countries, 
+                loading: false, 
+                currentPage: 1,
+                totalPages
+            });
+                
+        } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : `Error loading ${region} countries`;
+            set({ error: errorMessage, loading: false });
+        }
+
+    }
 
 }));

@@ -71,5 +71,7 @@ export interface CountriesState {
    setItemsPerPage: (items: number) => void;
    getPaginatedCountries: () => Country[];
 
-  
+   //acciones para filtrado por region
+   selectedRegion: string
+   filterByRegion: (region: string) => Promise<void>;
 }
