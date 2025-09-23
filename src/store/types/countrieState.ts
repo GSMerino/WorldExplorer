@@ -67,6 +67,8 @@ export interface CountriesState {
    totalPages: number;
    selectedRegion: string;
    selectedLanguage: string;
+
+   searchQuery: string;
     
    // Acciones
    fetchCountries: () => Promise<void>;
@@ -76,4 +78,7 @@ export interface CountriesState {
    getPaginatedCountries: () => Country[];
    setCurrentPage: (page: number) => void;
    setItemsPerPage: (items: number) => void;
+
+   searchCountriesByName: (name: string) => Promise<void>;
+
 }

@@ -1,6 +1,6 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useCountrieStore } from "../store/countrieStore/useCountrieStore"
-import { Button, Pagination } from '@mui/material';
+import { Button } from '@mui/material';
 
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
@@ -10,7 +10,7 @@ import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
 import SearchIcon from '@mui/icons-material/Search';
 import { useNavigate } from "react-router-dom";
-
+import { useDebounceCountry } from "../hooks/useSearchCountryDebauns";
 
 
 export const CountryList = () => {
@@ -20,33 +20,41 @@ export const CountryList = () => {
     const { 
         countries, 
         loading, 
-        error, 
-        fetchCountries, 
+        error,  
         currentPage,
         itemsPerPage,
         selectedRegion,
         selectedLanguage,
         totalPages,
+        searchQuery,
         getPaginatedCountries,
         setCurrentPage,
         setItemsPerPage,
-        setRegion, // ← Cambiado
-        setLanguage, // ← Cambiado
-        applyFilters // ← Nuevo
+        setRegion,
+        setLanguage,
+        applyFilters,
+        fetchCountries,
+        searchCountriesByName
        
     } = useCountrieStore();
+
+    const [localSearchQuery, setLocalSearchQuery] = useState(searchQuery);
+    const debouncedSearchQuery = useDebounceCountry(localSearchQuery, 500);
     
     // Obtener países de la página actual
     const paginatedCountries = getPaginatedCountries();
     const totalCountries = countries.length;
 
-    const handleViewDetail = (countryCode: string) => {
-        navigate(`/country/${countryCode}`);
-    };
 
     useEffect(() => {
-        fetchCountries();
-    }, [fetchCountries]);
+        searchCountriesByName(debouncedSearchQuery);
+    }, [debouncedSearchQuery]);
+    
+    useEffect(() => {
+        if (countries.length === 0) {
+            fetchCountries();
+        }
+    }, [fetchCountries, countries.length]);
 
     useEffect(() => {
         if (selectedRegion !== "all" || selectedLanguage !== "all") {
@@ -54,7 +62,12 @@ export const CountryList = () => {
         }
     }, [selectedRegion, selectedLanguage, applyFilters]);
 
-        const handleRegionChange = (region: string) => {
+
+    const handleViewDetail = (countryCode: string) => {
+        navigate(`/country/${countryCode}`);
+    };
+
+    const handleRegionChange = (region: string) => {
         setRegion(region);
     };
 
@@ -62,11 +75,6 @@ export const CountryList = () => {
         setLanguage(language);
     };
 
-    const handleClearFilters = () => {
-        setRegion("all");
-        setLanguage("all");
-        fetchCountries();
-    };
 
 
     if (loading) return <div className="p-8 text-center">Loading countries...</div>;
@@ -79,14 +87,16 @@ export const CountryList = () => {
                 <div className="border">
                     <div className="flex flex-col w-full lg:w-[50%] justify-end h-[100%]">
                         <TextField
+                            value={localSearchQuery}
+                            onChange={(e) => setLocalSearchQuery(e.target.value)}
                             label="Buscar"
                             variant="outlined"
                             placeholder="Buscar por nombre"
                             InputProps={{
                                 startAdornment: (
-                                <InputAdornment position="start">
-                                    <SearchIcon />
-                                </InputAdornment>
+                                    <InputAdornment position="start">
+                                        <SearchIcon />
+                                    </InputAdornment>
                                 ),
                             }}
                         />
@@ -212,7 +222,7 @@ export const CountryList = () => {
 
             {/* LISTA DE PAÍSES PAGINADOS */}
             <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-4">
-            
+
                 {paginatedCountries.map(country => (
                     <article key={country.cca3} className="bg-white rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow">
                         <img 
