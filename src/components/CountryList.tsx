@@ -1,10 +1,24 @@
 import { useEffect } from "react";
 import { useCountrieStore } from "../store/countrieStore/useCountrieStore"
+import { Button, Pagination } from '@mui/material';
+
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import TextField from '@mui/material/TextField';
+import InputAdornment from '@mui/material/InputAdornment';
+import SearchIcon from '@mui/icons-material/Search';
+import { useNavigate } from "react-router-dom";
+
 
 
 export const CountryList = () => {
+
+    const navigate = useNavigate();
+
     const { 
-  countries, 
+        countries, 
         loading, 
         error, 
         fetchCountries, 
@@ -25,7 +39,11 @@ export const CountryList = () => {
     // Obtener países de la página actual
     const paginatedCountries = getPaginatedCountries();
     const totalCountries = countries.length;
-    
+
+    const handleViewDetail = (countryCode: string) => {
+        navigate(`/country/${countryCode}`);
+    };
+
     useEffect(() => {
         fetchCountries();
     }, [fetchCountries]);
@@ -57,52 +75,77 @@ export const CountryList = () => {
     return(
         <section>
             {/* CONTROLES DE PAGINACIÓN */}
-            <div className="p-4 bg-gray-100 flex flex-wrap gap-4 items-center justify-between rounded-xl">
-                <div>
-                    <span className="text-sm text-gray-600">
-                        Showing {((currentPage - 1) * itemsPerPage) + 1} to {" "}
-                        {Math.min(currentPage * itemsPerPage, totalCountries)} of {" "}
-                        {totalCountries} countries
-                    </span>
+            <div className="p-4 bg-gray-100 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-6 rounded-xl">
+                <div className="border">
+                    <div className="flex flex-col w-full lg:w-[50%] justify-end h-[100%]">
+                        <TextField
+                            label="Buscar"
+                            variant="outlined"
+                            placeholder="Buscar por nombre"
+                            InputProps={{
+                                startAdornment: (
+                                <InputAdornment position="start">
+                                    <SearchIcon />
+                                </InputAdornment>
+                                ),
+                            }}
+                        />
+                    </div>
+                    
+
+
+                </div>
+                <div className="flex gap-5">
+                    
+                    <div className="flex flex-col gap-2">
+                        <p>Filtrar por Region:</p>
+                        <FormControl fullWidth size="small">
+                            <InputLabel id="demo-simple-select-label">Region</InputLabel>
+                            <Select
+                                labelId="demo-simple-select-label"
+                                id="demo-simple-select"
+                                value={selectedRegion}
+                                label="Region"
+                                onChange={(e) => handleRegionChange(e.target.value)}
+                            >
+                                <MenuItem value="all">Todos</MenuItem>
+                                <MenuItem value="europe">Europa</MenuItem>
+                                <MenuItem value="asia">Asia</MenuItem>
+                                <MenuItem value="africa">Africa</MenuItem>
+                                <MenuItem value="americas">America</MenuItem>
+                                <MenuItem value="oceania">Oceania</MenuItem>
+                                <MenuItem value="antarctic">Antartida</MenuItem>
+                            </Select>
+                        </FormControl>
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                        <p>Filtrar por Idioma:</p>
+                        <FormControl fullWidth size="small">
+                           <InputLabel id="demo-simple-select-label">Idioma</InputLabel> 
+
+                            <Select
+                                label="Idioma"
+                                value={selectedLanguage}
+                                onChange={(e) => handleLanguageChange(e.target.value)}
+                            >       
+                                <MenuItem value="all">Todos</MenuItem>
+                                <MenuItem value="english">Ingles</MenuItem>
+                                <MenuItem value="spanish">Español</MenuItem>
+                                <MenuItem value="french">Francia</MenuItem>
+                                <MenuItem value="german">German</MenuItem>
+                                <MenuItem value="arabic">Arabia</MenuItem>
+                                <MenuItem value="chinese">China</MenuItem>
+                                <MenuItem value="hindi">India</MenuItem>
+                                <MenuItem value="portuguese">Portuguese</MenuItem>
+                                <MenuItem value="russian">Rusia</MenuItem>
+                                <MenuItem value="japanese">Japon</MenuItem>
+                            </Select>
+                        </FormControl>
+                    </div>
                 </div>
 
-                <div className="flex flex-col gap-2">
-                    <p>Filtrar por Region:</p>
-                    <select
-                        value={selectedRegion}
-                        onChange={(e) => handleRegionChange(e.target.value)}
-                        className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                        <option value="all">Todas</option>
-                        <option value="europe">Europa</option>
-                        <option value="asia">Asia</option>
-                        <option value="africa">Africa</option>
-                        <option value="americas">America</option>
-                        <option value="oceania">Oceania</option>
-                        <option value="antarctic">Antartida</option>
-                    </select>
-                </div>
-                <div className="flex flex-col gap-2">
-                    <p>Filtrar por Idioma</p>
-                    <select
-                        value={selectedLanguage}
-                        onChange={(e) => handleLanguageChange(e.target.value)}
-                    >       
-                        <option value="all">Todos</option>
-                        <option value="english">English</option>
-                        <option value="spanish">Spanish</option>
-                        <option value="french">French</option>
-                        <option value="german">German</option>
-                        <option value="arabic">Arabic</option>
-                        <option value="chinese">Chinese</option>
-                        <option value="hindi">Hindi</option>
-                        <option value="portuguese">Portuguese</option>
-                        <option value="russian">Russian</option>
-                        <option value="japanese">Japanese</option>
-                    </select>
-                </div>
-
-                
+                    
                 <div className="flex items-center gap-4">
                     {/* Selector de items por página */}
                     <div className="flex items-center gap-2">
@@ -169,6 +212,7 @@ export const CountryList = () => {
 
             {/* LISTA DE PAÍSES PAGINADOS */}
             <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-4">
+            
                 {paginatedCountries.map(country => (
                     <article key={country.cca3} className="bg-white rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow">
                         <img 
@@ -179,15 +223,24 @@ export const CountryList = () => {
                         
                         <h3 className="text-lg font-bold mb-2 text-gray-800">{country.name.common}</h3>
                         
-                        <div className="space-y-1 text-sm text-gray-600">
+                        <div className="text-sm text-gray-600 flex flex-col gap-4">
                             <p>🏛️ Capital: {country.capital?.[0] || "N/A"}</p>
                             <p>
                                 🌍 Region: {country.region || "N/A"}
                             </p>
                             <p>👥 Population: {country.population?.toLocaleString() || "N/A"}</p>
+
                             {country.languages && (
                                 <p>🗣️ Language: {Object.values(country.languages)[0]}</p>
                             )}
+                            <div className="flex justify-center">
+                               <Button 
+                                    variant="outlined"
+                                    onClick={() => handleViewDetail(country.cca3)}
+                                >
+                                    Ver detalle
+                                </Button>
+                            </div>
                         </div>
                     </article>
                 ))}

@@ -33,7 +33,7 @@ export interface Country {
    };
    capital?: string[];
    cca2?: string;
-   cca3?: string;
+   cca3: string;
    region?: string;
    subregion?: string;
    population?: number;
