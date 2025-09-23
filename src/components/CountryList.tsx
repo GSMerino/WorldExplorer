@@ -4,7 +4,7 @@ import { useCountrieStore } from "../store/countrieStore/useCountrieStore"
 
 export const CountryList = () => {
     const { 
-        countries, 
+  countries, 
         loading, 
         error, 
         fetchCountries, 
@@ -16,8 +16,9 @@ export const CountryList = () => {
         getPaginatedCountries,
         setCurrentPage,
         setItemsPerPage,
-        filterByRegion,
-        filterByLanguage
+        setRegion, // ← Cambiado
+        setLanguage, // ← Cambiado
+        applyFilters // ← Nuevo
        
     } = useCountrieStore();
     
@@ -28,6 +29,27 @@ export const CountryList = () => {
     useEffect(() => {
         fetchCountries();
     }, [fetchCountries]);
+
+    useEffect(() => {
+        if (selectedRegion !== "all" || selectedLanguage !== "all") {
+            applyFilters();
+        }
+    }, [selectedRegion, selectedLanguage, applyFilters]);
+
+        const handleRegionChange = (region: string) => {
+        setRegion(region);
+    };
+
+    const handleLanguageChange = (language: string) => {
+        setLanguage(language);
+    };
+
+    const handleClearFilters = () => {
+        setRegion("all");
+        setLanguage("all");
+        fetchCountries();
+    };
+
 
     if (loading) return <div className="p-8 text-center">Loading countries...</div>;
     if (error) return <div className="p-8 text-center text-red-500">Error: {error}</div>;
@@ -48,7 +70,7 @@ export const CountryList = () => {
                     <p>Filtrar por Region:</p>
                     <select
                         value={selectedRegion}
-                        onChange={(e) => filterByRegion(e.target.value)}
+                        onChange={(e) => handleRegionChange(e.target.value)}
                         className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
                         <option value="all">Todas</option>
@@ -64,7 +86,7 @@ export const CountryList = () => {
                     <p>Filtrar por Idioma</p>
                     <select
                         value={selectedLanguage}
-                        onChange={(e) => filterByLanguage(e.target.value)}
+                        onChange={(e) => handleLanguageChange(e.target.value)}
                     >       
                         <option value="all">Todos</option>
                         <option value="english">English</option>

@@ -57,25 +57,23 @@ export interface CurrencyOption {
 
 // Type para el estado del store de países
 export interface CountriesState {
+   // Estado
    countries: Country[];
+   allCountries: Country[]; // ← Nuevo
    loading: boolean;
    error: string | null;
-   fetchCountries: () => Promise<void>;
-
-
-   //paginacion
    currentPage: number;
    itemsPerPage: number;
-   totalPages: number
+   totalPages: number;
+   selectedRegion: string;
+   selectedLanguage: string;
+    
+   // Acciones
+   fetchCountries: () => Promise<void>;
+   applyFilters: () => Promise<void>; // ← Cambiado
+   setRegion: (region: string) => void; // ← Nuevo
+   setLanguage: (language: string) => void; // ← Nuevo
+   getPaginatedCountries: () => Country[];
    setCurrentPage: (page: number) => void;
    setItemsPerPage: (items: number) => void;
-   getPaginatedCountries: () => Country[];
-
-   //acciones para filtrado por region
-   selectedRegion: string
-   filterByRegion: (region: string) => Promise<void>;
-
-   //filtrado por idioma
-   selectedLanguage: string;
-   filterByLanguage: (lang: string) => Promise<void>;
 }
