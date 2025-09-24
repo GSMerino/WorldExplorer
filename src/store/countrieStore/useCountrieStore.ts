@@ -14,6 +14,7 @@ export const useCountrieStore = create<CountriesState>((set, get) => ({
     selectedLanguage: "all",
     allCountries: [], // ← Nuevo: guardar todos los países para filtros combinados
     searchQuery: '',
+    sortBy: 'none',
 
     // 1. Obtener todos los países al inicio
     fetchCountries: async () => {
@@ -122,7 +123,6 @@ export const useCountrieStore = create<CountriesState>((set, get) => ({
                     set({ 
                         countries: [], 
                         loading: false 
-                        // searchQuery se mantiene con el nombre para mostrar "0 resultados"
                     });
                     return;
                 }
@@ -155,7 +155,9 @@ export const useCountrieStore = create<CountriesState>((set, get) => ({
 
     // 4. Paginación (se mantiene igual)
     getPaginatedCountries: () => {
-        const { countries, currentPage, itemsPerPage } = get();
+        const { countries, currentPage, itemsPerPage} = get();
+        
+        // Ya están ordenados por setSortBy, solo paginar
         const startIndex = (currentPage - 1) * itemsPerPage;
         const endIndex = startIndex + itemsPerPage;
         return countries.slice(startIndex, endIndex);
@@ -169,6 +171,43 @@ export const useCountrieStore = create<CountriesState>((set, get) => ({
         const { countries } = get();
         const totalPages = Math.ceil(countries.length / items);
         set({ itemsPerPage: items, totalPages, currentPage: 1 });
+    },
+
+
+
+
+
+
+    // ✅ NUEVA ACCIÓN: Ordenar países
+    setSortBy: (sortOption: CountriesState['sortBy']) => {
+        const { countries } = get();
+        
+        let sortedCountries = [...countries];
+        
+        switch (sortOption) {
+            case 'populationAsc':
+                sortedCountries.sort((a, b) => a.population - b.population);
+                break;
+            case 'populationDesc':
+                sortedCountries.sort((a, b) => b.population - a.population);
+                break;
+            case 'nameAsc':
+                sortedCountries.sort((a, b) => a.name.common.localeCompare(b.name.common));
+                break;
+            case 'nameDesc':
+                sortedCountries.sort((a, b) => b.name.common.localeCompare(a.name.common));
+                break;
+            case 'none':
+            default:
+                
+                break;
+        }
+        
+        set({ 
+            sortBy: sortOption,
+            countries: sortedCountries,
+            currentPage: 1 
+        });
     },
 
 }));

@@ -11,7 +11,10 @@ import InputAdornment from '@mui/material/InputAdornment';
 import SearchIcon from '@mui/icons-material/Search';
 import { useNavigate } from "react-router-dom";
 import { useDebounceCountry } from "../hooks/useSearchCountryDebauns";
-
+import type { CountriesState } from "../store/types/countrieState";
+import { MdArrowBackIos, MdArrowForwardIos, MdOutlineCleaningServices  } from "react-icons/md";
+import Tooltip from '@mui/material/Tooltip';
+import IconButton from '@mui/material/IconButton';
 
 export const CountryList = () => {
 
@@ -27,6 +30,7 @@ export const CountryList = () => {
         selectedLanguage,
         totalPages,
         searchQuery,
+        sortBy,
         getPaginatedCountries,
         setCurrentPage,
         setItemsPerPage,
@@ -34,7 +38,8 @@ export const CountryList = () => {
         setLanguage,
         applyFilters,
         fetchCountries,
-        searchCountriesByName
+        searchCountriesByName,
+        setSortBy
        
     } = useCountrieStore();
 
@@ -75,148 +80,195 @@ export const CountryList = () => {
         setLanguage(language);
     };
 
+    const handleClearAllFilters = () => {
+        setLocalSearchQuery(''); 
+        setRegion('all'); 
+        setLanguage('all'); 
+        fetchCountries(); 
+    };
 
+    const handleSortChange = (sortOption: string) => {
+        setSortBy(sortOption as CountriesState['sortBy']);
+    };
 
     if (loading) return <div className="p-8 text-center">Loading countries...</div>;
     if (error) return <div className="p-8 text-center text-red-500">Error: {error}</div>;
     
     return(
         <section>
-            {/* CONTROLES DE PAGINACIÓN */}
-            <div className="p-4 bg-gray-100 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-6 rounded-xl">
-                <div className="border">
-                    <div className="flex flex-col w-full lg:w-[50%] justify-end h-[100%]">
-                        <TextField
-                            value={localSearchQuery}
-                            onChange={(e) => setLocalSearchQuery(e.target.value)}
-                            label="Buscar"
-                            variant="outlined"
-                            placeholder="Buscar por nombre"
-                            InputProps={{
-                                startAdornment: (
-                                    <InputAdornment position="start">
-                                        <SearchIcon />
-                                    </InputAdornment>
-                                ),
-                            }}
-                        />
-                    </div>
+            <div className="w-full mb-10">
+
+                <div className="flex flex-col gap-4">
                     
+                    <div>
+                        <div className="w-[45%]">
+                            <TextField
+                                value={localSearchQuery}
+                                onChange={(e) => setLocalSearchQuery(e.target.value)}
+                                label="Buscar"
 
-
-                </div>
-                <div className="flex gap-5">
-                    
-                    <div className="flex flex-col gap-2">
-                        <p>Filtrar por Region:</p>
-                        <FormControl fullWidth size="small">
-                            <InputLabel id="demo-simple-select-label">Region</InputLabel>
-                            <Select
-                                labelId="demo-simple-select-label"
-                                id="demo-simple-select"
-                                value={selectedRegion}
-                                label="Region"
-                                onChange={(e) => handleRegionChange(e.target.value)}
-                            >
-                                <MenuItem value="all">Todos</MenuItem>
-                                <MenuItem value="europe">Europa</MenuItem>
-                                <MenuItem value="asia">Asia</MenuItem>
-                                <MenuItem value="africa">Africa</MenuItem>
-                                <MenuItem value="americas">America</MenuItem>
-                                <MenuItem value="oceania">Oceania</MenuItem>
-                                <MenuItem value="antarctic">Antartida</MenuItem>
-                            </Select>
-                        </FormControl>
+                                placeholder="Buscar por nombre"
+                                className="w-full bg-[#ffffff] p-0"
+                                InputProps={{
+                                    startAdornment: (
+                                        <InputAdornment position="start">
+                                            <SearchIcon />
+                                        </InputAdornment>
+                                    ),
+                                }}
+                            />
+                        </div>
                     </div>
+                    <div className="p-4 bg-[#ffffff] rounded-xl w-full">
+                        <div className="flex flex-col gap-6">
+                            <div className="w-full border grid grid-cols-1 lg:grid-cols-4 md:grid-cols-4 gap-5">
+                                
+                                <div className="flex flex-col gap-4">
+                                    <p>Filtrar por Idioma</p>
+                                    <FormControl fullWidth size="small">
+                                        <InputLabel id="demo-simple-select-label">Idioma</InputLabel> 
 
-                    <div className="flex flex-col gap-2">
-                        <p>Filtrar por Idioma:</p>
-                        <FormControl fullWidth size="small">
-                           <InputLabel id="demo-simple-select-label">Idioma</InputLabel> 
+                                        <Select
+                                            label="Idioma"
+                                            value={selectedLanguage}
+                                            onChange={(e) => handleLanguageChange(e.target.value)}
+                                        >       
+                                            <MenuItem value="all">Todos</MenuItem>
+                                            <MenuItem value="english">Ingles</MenuItem>
+                                            <MenuItem value="spanish">Español</MenuItem>
+                                            <MenuItem value="french">Francia</MenuItem>
+                                            <MenuItem value="german">German</MenuItem>
+                                            <MenuItem value="arabic">Arabia</MenuItem>
+                                            <MenuItem value="chinese">China</MenuItem>
+                                            <MenuItem value="hindi">India</MenuItem>
+                                            <MenuItem value="portuguese">Portuguese</MenuItem>
+                                            <MenuItem value="russian">Rusia</MenuItem>
+                                            <MenuItem value="japanese">Japon</MenuItem>
+                                        </Select>
+                                    </FormControl>
+                                </div>
+                                <div className="flex flex-col gap-4">
+                                    <p>Filtrar por Region</p>
+                                    <FormControl fullWidth size="small">
+                                        <InputLabel id="demo-simple-select-label">Region</InputLabel>
+                                        <Select
+                                            labelId="demo-simple-select-label"
+                                            id="demo-simple-select"
+                                            value={selectedRegion}
+                                            label="Region"
+                                            onChange={(e) => handleRegionChange(e.target.value)}
+                                        >
+                                            <MenuItem value="all">Todos</MenuItem>
+                                            <MenuItem value="europe">Europa</MenuItem>
+                                            <MenuItem value="asia">Asia</MenuItem>
+                                            <MenuItem value="africa">Africa</MenuItem>
+                                            <MenuItem value="americas">America</MenuItem>
+                                            <MenuItem value="oceania">Oceania</MenuItem>
+                                            <MenuItem value="antarctic">Antartida</MenuItem>
+                                        </Select>
+                                    </FormControl>
+                                </div>
+                                <div className="flex flex-col gap-4">
+                                    <p>Ordenar por</p>  
+                                    <FormControl fullWidth size="small">
+                                        <InputLabel id="demo-simple-select-label">Ordenar</InputLabel>
+                                        <Select
+                                            value={sortBy}
+                                            label="Ordenar"
+                                            onChange={(e) => handleSortChange(e.target.value)}
+                                        >
+                                            <MenuItem value="none">Sin orden</MenuItem>
+                                            <MenuItem value="populationDesc">Población (Mayor a menor)</MenuItem>
+                                            <MenuItem value="populationAsc">Población (Menor a mayor)</MenuItem>
+                                            <MenuItem value="nameAsc">Nombre (A-Z)</MenuItem>
+                                            <MenuItem value="nameDesc">Nombre (Z-A)</MenuItem>
+                                        </Select>
+                                    </FormControl> 
+                                </div>
+                                <div className="flex flex-col gap-4">
+                                    <p>Paises por pagina</p>
+                                    <FormControl fullWidth size="small">
+                                        <InputLabel id="demo-simple-select-label">Paginas</InputLabel>
+                                        <Select
+                                            id="demo-simple-select-label"
+                                            label="Paginas"
+                                            value={itemsPerPage}
+                                            onChange={(e) => setItemsPerPage(Number(e.target.value))}
+                                        >
+                                            <MenuItem value={8}>8</MenuItem>
+                                            <MenuItem value={12}>12</MenuItem>
+                                            <MenuItem value={20}>20</MenuItem>
+                                            <MenuItem value={50}>50</MenuItem>
+                                        </Select>
+                                    </FormControl>
 
-                            <Select
-                                label="Idioma"
-                                value={selectedLanguage}
-                                onChange={(e) => handleLanguageChange(e.target.value)}
-                            >       
-                                <MenuItem value="all">Todos</MenuItem>
-                                <MenuItem value="english">Ingles</MenuItem>
-                                <MenuItem value="spanish">Español</MenuItem>
-                                <MenuItem value="french">Francia</MenuItem>
-                                <MenuItem value="german">German</MenuItem>
-                                <MenuItem value="arabic">Arabia</MenuItem>
-                                <MenuItem value="chinese">China</MenuItem>
-                                <MenuItem value="hindi">India</MenuItem>
-                                <MenuItem value="portuguese">Portuguese</MenuItem>
-                                <MenuItem value="russian">Rusia</MenuItem>
-                                <MenuItem value="japanese">Japon</MenuItem>
-                            </Select>
-                        </FormControl>
-                    </div>
-                </div>
+                                </div>
 
-                    
-                <div className="flex items-center gap-4">
-                    {/* Selector de items por página */}
-                    <div className="flex items-center gap-2">
-                        <label className="text-sm">Paises por pagina:</label>
-                        <select
-                            value={itemsPerPage}
-                            onChange={(e) => setItemsPerPage(Number(e.target.value))}
-                            className="p-1 border rounded"
-                        >
-                            <option value={8}>8</option>
-                            <option value={12}>12</option>
-                            <option value={20}>20</option>
-                            <option value={50}>50</option>
-                        </select>
-                    </div>
+                            </div>
+                            <div className="w-full flex justify-between items-center">
+                                <div>
+                                    {(selectedRegion !== "all" || selectedLanguage !== "all" ) && (
+                                        <div className="items-center flex">
+                                            <p className="text-sm text-blue-800">
+                                                📍 Filtros: 
+                                                {selectedRegion !== "all" && <span className="font-bold ml-2">Region: {selectedRegion}</span>}
+                                                {selectedLanguage !== "all" && <span className="font-bold ml-2">Language: {selectedLanguage}</span>}
+                                                <span className="ml-2 text-blue-600">({totalCountries} Paises)</span>
+                                            </p>
+                                        </div>
+                                    )}
+                                </div>
 
-                    {/* Controles de página */}
-                    <div className="flex items-center gap-2">
-                        <button
-                            onClick={() => setCurrentPage(currentPage - 1)}
-                            disabled={currentPage === 1}
-                            className="px-3 py-1 border rounded disabled:opacity-50 hover:bg-gray-100"
-                        >
-                            ←
-                        </button>
-                        
-                        <span className="text-sm">
-                            Page {currentPage} of {totalPages}
-                        </span>
-                        
-                        <button
-                            onClick={() => setCurrentPage(currentPage + 1)}
-                            disabled={currentPage === totalPages}
-                            className="px-3 py-1 border rounded disabled:opacity-50 hover:bg-gray-100"
-                        >
-                            →
-                        </button>
+                                <div className="flex gap-5">
+                                    <div>
+                                        {(selectedRegion !== "all" || selectedLanguage !== "all" ) && (
+                                            <div>
+                                                <Tooltip title="Limpiar filtros">
+                                                    <IconButton
+                                                        onClick={handleClearAllFilters}
+                                                    >
+                                                        <MdOutlineCleaningServices /> 
+                                                    </IconButton>
+                                                </Tooltip>
+                                            </div>
+                                        )}
+
+                                    </div>
+                                    <div className="flex items-center">
+                                        <button
+                                            onClick={() => setCurrentPage(currentPage - 1)}
+                                            disabled={currentPage === 1}
+                                            className="px-3 py-1 rounded disabled:opacity-50 hover:bg-gray-100"
+                                        >
+                                            <MdArrowBackIos size={20} />
+                                        </button>
+                                
+                                        <span className="text-sm">
+                                            Pagina {currentPage} de {totalPages}
+                                        </span>
+                                
+                                        <button
+                                            onClick={() => setCurrentPage(currentPage + 1)}
+                                            disabled={currentPage === totalPages}
+                                            className="px-3 py-1 disabled:opacity-50 hover:bg-gray-100"
+                                        >
+                                            <MdArrowForwardIos  size={20} />
+                                        </button>
+                                    </div> 
+                                </div>
+
+                            </div>
+                        </div>
+
+
                     </div>
                 </div>
 
             </div>
 
 
-            {(selectedRegion !== "all" || selectedLanguage !== "all") && (
-                <div className="p-4 bg-blue-50 border-b">
-                    <div className="max-w-4xl mx-auto flex justify-between items-center">
-                        <p className="text-sm text-blue-800">
-                            📍 Active filters: 
-                            {selectedRegion !== "all" && <span className="font-bold ml-2">Region: {selectedRegion}</span>}
-                            {selectedLanguage !== "all" && <span className="font-bold ml-2">Language: {selectedLanguage}</span>}
-                            <span className="ml-2 text-blue-600">({totalCountries} countries)</span>
-                        </p>
-                        <button 
-                            onClick={fetchCountries}
-                            className="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600"
-                        >
-                            Clear All Filters
-                        </button>
-                    </div>
-                </div>
-            )}
+
+
 
 
 
@@ -238,10 +290,10 @@ export const CountryList = () => {
                             <p>
                                 🌍 Region: {country.region || "N/A"}
                             </p>
-                            <p>👥 Population: {country.population?.toLocaleString() || "N/A"}</p>
+                            <p>👥 Poblaciòn: {country.population?.toLocaleString() || "N/A"}</p>
 
                             {country.languages && (
-                                <p>🗣️ Language: {Object.values(country.languages)[0]}</p>
+                                <p>🗣️ Idioma: {Object.values(country.languages)[0]}</p>
                             )}
                             <div className="flex justify-center">
                                <Button 

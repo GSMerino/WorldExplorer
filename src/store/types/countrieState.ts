@@ -36,7 +36,7 @@ export interface Country {
    cca3: string;
    region?: string;
    subregion?: string;
-   population?: number;
+   population: number;
    languages?: {
       [code: string]: string;
    };
@@ -81,4 +81,10 @@ export interface CountriesState {
 
    searchCountriesByName: (name: string) => Promise<void>;
 
+
+   sortBy: 'populationAsc' | 'populationDesc' | 'nameAsc' | 'nameDesc' | 'none';
+   setSortBy: (sortOption: 'populationAsc' | 'populationDesc' | 'nameAsc' | 'nameDesc' | 'none') => void;
+
+
+   
 }
