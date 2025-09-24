@@ -11,7 +11,6 @@ import InputAdornment from '@mui/material/InputAdornment';
 import SearchIcon from '@mui/icons-material/Search';
 import { useNavigate } from "react-router-dom";
 import { useDebounceCountry } from "../hooks/useSearchCountryDebauns";
-import type { CountriesState } from "../store/types/countrieState";
 import { MdArrowBackIos, MdArrowForwardIos, MdOutlineCleaningServices  } from "react-icons/md";
 import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
@@ -20,59 +19,56 @@ export const CountryList = () => {
 
     const navigate = useNavigate();
 
-    const { 
-        countries, 
-        loading, 
-        error,  
-        currentPage,
-        itemsPerPage,
-        selectedRegion,
-        selectedLanguage,
-        totalPages,
-        searchQuery,
-        sortBy,
-        getPaginatedCountries,
-        setCurrentPage,
-        setItemsPerPage,
-        setRegion,
-        setLanguage,
-        applyFilters,
-        fetchCountries,
-        searchCountriesByName,
-        setSortBy
-       
-    } = useCountrieStore();
+
+  const {
+    countries,
+    loading,
+    error,
+    currentPage,
+    itemsPerPage,
+    totalPages,
+    selectedRegion,
+    selectedLanguage,
+    sortBy,
+    searchQuery,
+    getPaginatedCountries,
+    setCurrentPage,
+    setItemsPerPage,
+    setRegion,
+    setLanguage,
+    setSortBy,
+    searchCountriesByName,
+    resetFilters,
+    fetchCountries,
+  } = useCountrieStore();
 
     const [localSearchQuery, setLocalSearchQuery] = useState(searchQuery);
     const debouncedSearchQuery = useDebounceCountry(localSearchQuery, 500);
     
-    // Obtener países de la página actual
-    const paginatedCountries = getPaginatedCountries();
-    const totalCountries = countries.length;
-
-
     useEffect(() => {
         searchCountriesByName(debouncedSearchQuery);
     }, [debouncedSearchQuery]);
-    
+
+    //carga inicial de paises si no hay datos
     useEffect(() => {
         if (countries.length === 0) {
             fetchCountries();
         }
     }, [fetchCountries, countries.length]);
 
-    useEffect(() => {
-        if (selectedRegion !== "all" || selectedLanguage !== "all") {
-            applyFilters();
-        }
-    }, [selectedRegion, selectedLanguage, applyFilters]);
-
+    // Obtener países de la página actual
+    const paginatedCountries = getPaginatedCountries();
+    const totalCountries = countries.length;
 
     const handleViewDetail = (countryCode: string) => {
         navigate(`/country/${countryCode}`);
     };
 
+
+    //FILTROS
+
     const handleRegionChange = (region: string) => {
+        
         setRegion(region);
     };
 
@@ -80,16 +76,16 @@ export const CountryList = () => {
         setLanguage(language);
     };
 
-    const handleClearAllFilters = () => {
-        setLocalSearchQuery(''); 
-        setRegion('all'); 
-        setLanguage('all'); 
-        fetchCountries(); 
+    const handleSortChange = (sortOption: string) => {
+        setSortBy(sortOption as typeof sortBy);
     };
 
-    const handleSortChange = (sortOption: string) => {
-        setSortBy(sortOption as CountriesState['sortBy']);
+    const handleClearAllFilters = () => {
+        setLocalSearchQuery('');
+        resetFilters();
     };
+
+
 
     if (loading) return <div className="p-8 text-center">Loading countries...</div>;
     if (error) return <div className="p-8 text-center text-red-500">Error: {error}</div>;
@@ -107,7 +103,7 @@ export const CountryList = () => {
                                 onChange={(e) => setLocalSearchQuery(e.target.value)}
                                 label="Buscar"
 
-                                placeholder="Buscar por nombre"
+                                placeholder="Escribe el nombre de un país"
                                 className="w-full bg-[#ffffff] p-0"
                                 InputProps={{
                                     startAdornment: (
@@ -121,7 +117,7 @@ export const CountryList = () => {
                     </div>
                     <div className="p-4 bg-[#ffffff] rounded-xl w-full">
                         <div className="flex flex-col gap-6">
-                            <div className="w-full border grid grid-cols-1 lg:grid-cols-4 md:grid-cols-4 gap-5">
+                            <div className="w-full grid grid-cols-1 lg:grid-cols-4 md:grid-cols-4 gap-5">
                                 
                                 <div className="flex flex-col gap-4">
                                     <p>Filtrar por Idioma</p>
@@ -159,12 +155,12 @@ export const CountryList = () => {
                                             onChange={(e) => handleRegionChange(e.target.value)}
                                         >
                                             <MenuItem value="all">Todos</MenuItem>
-                                            <MenuItem value="europe">Europa</MenuItem>
-                                            <MenuItem value="asia">Asia</MenuItem>
-                                            <MenuItem value="africa">Africa</MenuItem>
-                                            <MenuItem value="americas">America</MenuItem>
-                                            <MenuItem value="oceania">Oceania</MenuItem>
-                                            <MenuItem value="antarctic">Antartida</MenuItem>
+                                            <MenuItem value="Europe">Europa</MenuItem>
+                                            <MenuItem value="Asia">Asia</MenuItem>
+                                            <MenuItem value="Africa">Africa</MenuItem>
+                                            <MenuItem value="Americas">America</MenuItem>
+                                            <MenuItem value="Oceania">Oceania</MenuItem>
+                                            <MenuItem value="Antarctic">Antartida</MenuItem>
                                         </Select>
                                     </FormControl>
                                 </div>
@@ -329,7 +325,7 @@ export const CountryList = () => {
                         </button>
                         
                         <span className="px-4 py-2 bg-white border rounded">
-                            Page {currentPage} of {totalPages}
+                            Pagina {currentPage} de {totalPages}
                         </span>
                         
                         <button
@@ -337,7 +333,7 @@ export const CountryList = () => {
                             disabled={currentPage === totalPages}
                             className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50 hover:bg-blue-600"
                         >
-                            Next
+                            siguiente
                         </button>
                         
                         <button

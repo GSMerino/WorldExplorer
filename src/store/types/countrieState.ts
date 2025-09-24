@@ -55,11 +55,13 @@ export interface CurrencyOption {
    countryCode: string;
 }
 
-// Type para el estado del store de países
+export type SortOption = 'populationAsc' | 'populationDesc' | 'nameAsc' | 'nameDesc' | 'none';
+
+
 export interface CountriesState {
    // Estado
    countries: Country[];
-   allCountries: Country[]; // ← Nuevo
+   allCountries: Country[]; 
    loading: boolean;
    error: string | null;
    currentPage: number;
@@ -67,24 +69,21 @@ export interface CountriesState {
    totalPages: number;
    selectedRegion: string;
    selectedLanguage: string;
-
    searchQuery: string;
-    
+   sortBy: SortOption;
+
    // Acciones
    fetchCountries: () => Promise<void>;
-   applyFilters: () => Promise<void>; // ← Cambiado
-   setRegion: (region: string) => void; // ← Nuevo
-   setLanguage: (language: string) => void; // ← Nuevo
+   applyAllFilters: () => void;
+   resetFilters: () => void;
+   
+   setRegion: (region: string) => void; 
+   setLanguage: (language: string) => void; 
+   setSortBy: (sortOption: SortOption) => void;
+   searchCountriesByName: (name: string) => void;
+
    getPaginatedCountries: () => Country[];
    setCurrentPage: (page: number) => void;
    setItemsPerPage: (items: number) => void;
 
-   searchCountriesByName: (name: string) => Promise<void>;
-
-
-   sortBy: 'populationAsc' | 'populationDesc' | 'nameAsc' | 'nameDesc' | 'none';
-   setSortBy: (sortOption: 'populationAsc' | 'populationDesc' | 'nameAsc' | 'nameDesc' | 'none') => void;
-
-
-   
 }
