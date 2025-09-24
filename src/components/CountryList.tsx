@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useCountrieStore } from "../store/countrieStore/useCountrieStore"
-import { Button } from '@mui/material';
+import { motion, AnimatePresence  } from 'framer-motion';
 
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
@@ -14,6 +14,11 @@ import { useDebounceCountry } from "../hooks/useSearchCountryDebauns";
 import { MdArrowBackIos, MdArrowForwardIos, MdOutlineCleaningServices  } from "react-icons/md";
 import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
+import { fadeIn } from "../variants/variant"; 
+import { RxDoubleArrowRight } from "react-icons/rx";
+import { MdOutlineKeyboardArrowRight, MdKeyboardDoubleArrowLeft, MdKeyboardArrowLeft  } from "react-icons/md";
+
+
 
 export const CountryList = () => {
 
@@ -289,38 +294,55 @@ export const CountryList = () => {
 
             {/* LISTA DE PAÍSES PAGINADOS */}
             <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-4">
+                
+                <AnimatePresence mode="wait">
+                    {paginatedCountries.map((country, index) => (
+                        <motion.article
+                            key={country.cca3}
+                            initial="hidden"
+                            animate="show"
+                            exit={{ opacity: 0, scale: 0.9 }}
+                            variants={fadeIn('up', index * 0.1)}
+                            className="bg-white rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow"
+                        >
+                            <img 
+                                src={country.flags.png} 
+                                alt={country.flags.alt || `Flag of ${country.name.common}`}
+                                className="w-full h-40 object-cover mb-3 rounded"
+                            />
+                                
+                            <h3 className="text-lg font-bold mb-2 text-gray-800">{country.name.common}</h3>
+                                
+                            <div className="text-sm text-gray-600 flex flex-col gap-4 font-semibold">
+                                <p>🏛️ Capital: {country.capital?.[0] || "N/A"}</p>
+                                <p>
+                                    🌍 Region: {country.region || "N/A"}
+                                </p>
+                                <p>👥 Poblaciòn: {country.population?.toLocaleString() || "N/A"}</p>
 
-                {paginatedCountries.map(country => (
-                    <article key={country.cca3} className="bg-white rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow">
-                        <img 
-                            src={country.flags.png} 
-                            alt={country.flags.alt || `Flag of ${country.name.common}`}
-                            className="w-full h-40 object-cover mb-3 rounded"
-                        />
-                        
-                        <h3 className="text-lg font-bold mb-2 text-gray-800">{country.name.common}</h3>
-                        
-                        <div className="text-sm text-gray-600 flex flex-col gap-4">
-                            <p>🏛️ Capital: {country.capital?.[0] || "N/A"}</p>
-                            <p>
-                                🌍 Region: {country.region || "N/A"}
-                            </p>
-                            <p>👥 Poblaciòn: {country.population?.toLocaleString() || "N/A"}</p>
+                                {country.languages && (
+                                    <p>🗣️ Idioma: {Object.values(country.languages)[0]}</p>
+                                )}
+                                <div className="flex justify-center">
+                                    <motion.button
+                                        whileTap={{ scale: 0.95 }}
+                                        whileHover={{ scale: 1.05 }}
+                                        transition={{ type: 'spring', stiffness: 400 }}
+                                        className="bg-[#FC4044] font-semibold text-white px-4 py-2 rounded-xl"
+                                        onClick={() => handleViewDetail(country.cca3)}
+                                    >
+                                        Ver detalle
+                                    </motion.button>
 
-                            {country.languages && (
-                                <p>🗣️ Idioma: {Object.values(country.languages)[0]}</p>
-                            )}
-                            <div className="flex justify-center">
-                               <Button 
-                                    variant="outlined"
-                                    onClick={() => handleViewDetail(country.cca3)}
-                                >
-                                    Ver detalle
-                                </Button>
+                                </div>
                             </div>
-                        </div>
-                    </article>
-                ))}
+                        </motion.article>
+
+                    ))}                           
+                </AnimatePresence>                       
+
+                          
+
             </section>
 
             {/* PAGINACIÓN INFERIOR (opcional) */}
@@ -330,17 +352,18 @@ export const CountryList = () => {
                         <button
                             onClick={() => setCurrentPage(1)}
                             disabled={currentPage === 1}
-                            className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50 hover:bg-blue-600"
+                            className="px-4 py-2 bg-[#0D30C3] text-white rounded disabled:opacity-50 hover:bg-blue-600"
                         >
-                            First
+                            <MdKeyboardDoubleArrowLeft />
                         </button>
                         
                         <button
                             onClick={() => setCurrentPage(currentPage - 1)}
                             disabled={currentPage === 1}
-                            className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50 hover:bg-blue-600"
+                            className="px-4 py-2 bg-[#0D30C3] text-white rounded disabled:opacity-50 hover:bg-blue-600"
                         >
-                            Previous
+                            
+                            <MdKeyboardArrowLeft />
                         </button>
                         
                         <span className="px-4 py-2 bg-white border rounded">
@@ -350,17 +373,17 @@ export const CountryList = () => {
                         <button
                             onClick={() => setCurrentPage(currentPage + 1)}
                             disabled={currentPage === totalPages}
-                            className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50 hover:bg-blue-600"
+                            className="px-4 py-2 bg-[#0D30C3] text-white rounded disabled:opacity-50 hover:bg-blue-600"
                         >
-                            siguiente
+                            <MdOutlineKeyboardArrowRight />
                         </button>
                         
                         <button
                             onClick={() => setCurrentPage(totalPages)}
                             disabled={currentPage === totalPages}
-                            className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50 hover:bg-blue-600"
+                            className="px-4 py-2 bg-[#0D30C3] text-white rounded disabled:opacity-50 hover:bg-blue-600"
                         >
-                            Last
+                            <RxDoubleArrowRight />
                         </button>
                     </div>
                 </div>
