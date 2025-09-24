@@ -54,7 +54,7 @@ export const ChartsPage = () => {
 
 
     return (
-        <Box sx={{ width: '100%', p: 4, minHeight: '90vh' }}>
+        <Box  sx={{ width: '100%', p: 2, minHeight: '95vh' }} >
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                 <Tabs value={value} onChange={handleChange} aria-label="Gráficas de países" centered>
                 <Tab label="Distribución por región" {...a11yProps(0)} />

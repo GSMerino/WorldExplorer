@@ -11,8 +11,8 @@ function App() {
 
     return (
         <main className='bg-[#EBF0F2]'>
-            <header className='bg-[#002A52] p-5 sticky top-[0px] z-[99]'>
-                <nav className='flex items-center justify-between pr-[3.5rem] pl-[3.5rem]'>
+            <header className='bg-[#002A52] p-5 sticky top-0 z-[99]'>
+                <nav className='flex items-center justify-between pl-2 pr-2 md:pl-[3.5rem] md:pr-[3.5rem] lg:pl-[3.5rem] lg:pr[3.5rem] xl:pl-[3.5rem] xl:pr-[3.5rem]'>
                     <span className='text-white font-oswald text-2xl font-medium flex items-center gap-1 '>
                         World Explorer
                         

@@ -107,7 +107,7 @@ export const RegionDistributionChart = () => {
                 viewport={{ once: true, amount: 0.5 }}
                 transition={{ duration: 0.6 }}
 
-                className="p-4 max-w-[60%] mx-auto mb-8 bg-[#ffffff] rounded-xl"
+                className="p-4 max-w-5xl md:max-w-5xl lg:max-w-[60%] mx-auto mb-8 bg-[#ffffff] rounded-xl"
             >
                 <h2 className="text-xl font-bold mb-4 text-center">
                     Distribución de países por región

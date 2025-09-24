@@ -100,12 +100,12 @@ export const CountryList = () => {
     
     return(
         <section>
-            <div className="w-full mb-10">
+            <div className="w-full mb-10 pt-8 pl-4 pr-4 mt-4 md:mt-0 lg:mt-0" >
 
                 <div className="flex flex-col gap-4">
                     
                     <div>
-                        <div className="w-[40%]">
+                        <div className="w-full md:w-[40%] lg:w-[40%] xl:w-[30%]">
                             <TextField
                                 value={localSearchQuery}
                                 onChange={(e) => setLocalSearchQuery(e.target.value)}

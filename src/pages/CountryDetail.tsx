@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
-  Button, CircularProgress, Alert, Box, Typography, Paper, Chip, Stack
+  Button, Alert, Box, Typography, Paper, Chip, Stack
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useCountrieStore } from '../store/countrieStore/useCountrieStore';
+import { motion } from 'framer-motion';
+import { ClipLoader } from 'react-spinners';
 
 interface Country {
     name: {
@@ -75,10 +77,17 @@ export const CountryDetail = () => {
 
     if (loading) {
         return (
-            <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
-                <CircularProgress />
-                <Typography variant="h6" ml={2}>Cargando información del país...</Typography>
-            </Box>
+            <section className='flex flex-col items-center min-h-[95vh] justify-center'>
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.4 }}
+                    className='flex flex-col gap-5 justify-center items-center'
+                >
+                    <ClipLoader color="#002A52" size={50} />
+                    <p className="text-[#002A52] font-medium text-lg animate-pulse">Preparando gráficas de países...</p>
+                </motion.div>
+            </section>
         );
     }
 
