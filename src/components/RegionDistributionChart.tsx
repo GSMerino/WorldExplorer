@@ -3,6 +3,7 @@ import { useCountrieStore } from '../store/countrieStore/useCountrieStore';
 import { motion } from 'framer-motion';
 import { ClipLoader } from 'react-spinners';
 
+
 import {
   Chart,
   BarElement,
@@ -17,7 +18,7 @@ Chart.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 export const RegionDistributionChart = () => {
     const { allCountries } = useCountrieStore();
     const isLoading = !allCountries || allCountries.length === 0;
-
+   
     if (isLoading) {
         return (
             <section className="mt-[50px] flex justify-center items-center h-[300px] ">

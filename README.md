@@ -1,69 +1,64 @@
-# React + TypeScript + Vite
+# Prueba tecnica Front
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Herramientas
 
-Currently, two official plugins are available:
+Esta es una aplicación web para explorar diferentes banderas y su descripcion. Utiliza las siguientes librerias: w
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+* React + vite + Typescript: Utilizamos una combinacion que utiliza React, una biblioteca de JavaScript para construir interfaces de usuario, y Vite, una herramienta de compilacion y desarrollo web muy rápida.
 
-## Expanding the ESLint configuration
+* react-router-dom: Es una libreria que se usa en React para gestionar la navegacion y el enrutamiento en una aplicacion.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+* zustand: Es una biblioteca minimalista y potente de gestión de estados para aplicaciones React y React Native, conocida por su simplicidad, API basada en ganchos y un tamaño muy pequeño.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+* Tailwind css: Es un framework de CSS "utility-first" que proporciona un conjunto de clases predefinidas y de bajo nivel, permitiendo a los desarrolladores construir rápidamente interfaces de usuario personalizadas directamente en el HTML
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+* framer-motion: Es una libreria de animación para React donde nos permite crear animaciones fluidas y personalizadas en la aplicaciones web.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+* Material UI: biblioteca de componentes de interfaz de usuario (UI) de código abierto para React, basada en los principios de diseño de Google Material Design.
+
+
+
+## Instalación
+
+1. Crea una carpeta
+
+2. Clona este repositorio:
+
+```
+git clone https://github.com/GSMerino/WorldExplorer.git <NOMBRE_DEL_PROYECTO>
+cd <NOMBRE_DEL_PROYECTO>
+
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+3. Instalacion de dependencias:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+4. abre consola y en tu proyecto ejecuta el siguiente comando:
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+
+``` 
+npm install 
+
 ```
+
+
+## Modo de Desarrollo
+
+Para ejecutar el servidor en modo de desarrollo, utiliza:
+
+```
+npm run dev
+
+```
+
+## Justificaciònes
+La estructura de la aplicación se basa en una arquitectura modular y escalable, donde cada vista y componente tiene una responsabilidad clara. Se utilizó React Router para manejar rutas dinámicas como los detalles por país, lo que permite una navegación fluida sin recargar la página. El estado global se gestiona con Zustand, una solución ligera que evita la complejidad de Redux y facilita el acceso a los datos desde cualquier parte de la app.
+
+El diseño visual se construyó con Tailwind CSS y Material UI, combinando velocidad de desarrollo con componentes accesibles y estilizados. Para mejorar la experiencia del usuario, se integraron animaciones con Framer Motion, haciendo que las transiciones entre vistas y elementos sean más fluidas.
+La arquitectura está pensada para facilitar el mantenimiento, la reutilización de componentes y la incorporación de nuevas funcionalidades sin romper la estructura existente.
+
+
+
+
+## Contribuciones
+
+¡Las contribuciones son bienvenidas! Si encuentras algún problema o tienes sugerencias para mejorar el template, no dudes en comunicarla.

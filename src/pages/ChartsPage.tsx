@@ -4,6 +4,8 @@ import { RegionDistributionChart } from '../components/RegionDistributionChart';
 import { TopPopulationChart } from '../components/TopPopulationChart';
 import { useCountrieStore } from '../store/countrieStore/useCountrieStore';
 
+
+
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
@@ -38,7 +40,7 @@ function a11yProps(index: number) {
 
 export const ChartsPage = () => {
     const [value, setValue] = useState(0);
-
+    
     const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue);
     };
@@ -57,8 +59,8 @@ export const ChartsPage = () => {
         <Box  sx={{ width: '100%', p: 2, minHeight: '95vh' }} >
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                 <Tabs value={value} onChange={handleChange} aria-label="Gráficas de países" centered>
-                <Tab label="Distribución por región" {...a11yProps(0)} />
-                <Tab label="Top países más poblados" {...a11yProps(1)} />
+                    <Tab label="Distribución por región" {...a11yProps(0)} />
+                    <Tab label="Top países más poblados" {...a11yProps(1)} />
                 </Tabs>
             </Box>
 

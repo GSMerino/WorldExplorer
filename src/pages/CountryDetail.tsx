@@ -95,11 +95,11 @@ export const CountryDetail = () => {
         return (
         <Box p={3}>
             <Alert severity="error" action={
-            <Button color="inherit" onClick={() => navigate('/')}>
-                Volver
-            </Button>
-            }>
-            {error}
+                <Button color="inherit" onClick={() => navigate('/')}>
+                    Volver
+                </Button>
+                }>
+                {error}
             </Alert>
         </Box>
         );
