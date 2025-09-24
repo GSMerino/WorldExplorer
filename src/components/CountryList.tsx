@@ -31,6 +31,8 @@ export const CountryList = () => {
     selectedLanguage,
     sortBy,
     searchQuery,
+    selectedCurrency,
+
     getPaginatedCountries,
     setCurrentPage,
     setItemsPerPage,
@@ -40,6 +42,7 @@ export const CountryList = () => {
     searchCountriesByName,
     resetFilters,
     fetchCountries,
+    setCurrency 
   } = useCountrieStore();
 
     const [localSearchQuery, setLocalSearchQuery] = useState(searchQuery);
@@ -117,7 +120,7 @@ export const CountryList = () => {
                     </div>
                     <div className="p-4 bg-[#ffffff] rounded-xl w-full">
                         <div className="flex flex-col gap-6">
-                            <div className="w-full grid grid-cols-1 lg:grid-cols-4 md:grid-cols-4 gap-5">
+                            <div className="w-full grid grid-cols-1 lg:grid-cols-5 md:grid-cols-5 gap-5">
                                 
                                 <div className="flex flex-col gap-4">
                                     <p>Filtrar por Idioma</p>
@@ -197,7 +200,23 @@ export const CountryList = () => {
                                             <MenuItem value={50}>50</MenuItem>
                                         </Select>
                                     </FormControl>
-
+                                </div>
+                                <div className="flex flex-col gap-4">
+                                    <p>Moneda</p>
+                                    <FormControl fullWidth size="small">
+                                        <InputLabel id="demo-simple-select-label">Moneda</InputLabel>
+                                        <Select
+                                            label="Moneda"
+                                            value={selectedCurrency}
+                                            onChange={(e) => setCurrency(e.target.value)}
+                                        >
+                                            <MenuItem value="USD">USD</MenuItem>
+                                            <MenuItem value="EUR">EUR</MenuItem>
+                                            <MenuItem value="GBP">GBP</MenuItem>
+                                            <MenuItem value="JPY">JPY</MenuItem>
+                                            <MenuItem value="MXN">MXN</MenuItem>
+                                        </Select>
+                                    </FormControl>
                                 </div>
 
                             </div>

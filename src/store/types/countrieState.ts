@@ -85,5 +85,12 @@ export interface CountriesState {
    getPaginatedCountries: () => Country[];
    setCurrentPage: (page: number) => void;
    setItemsPerPage: (items: number) => void;
+   
+   
+
+   selectedCurrency: string; // ej. 'USD'
+   exchangeRates: Record<string, number>; // ej. { EUR: 1.07, MXN: 18.5 }
+   fetchExchangeRates: (base: string) => Promise<void>;
+   setCurrency: (currency: string) => void;
 
 }

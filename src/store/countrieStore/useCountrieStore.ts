@@ -16,6 +16,10 @@ export const useCountrieStore = create<CountriesState>((set, get) => ({
     searchQuery: '',
     sortBy: 'none',
 
+    selectedCurrency: 'USD',
+    exchangeRates: {},
+
+
     // Obtener todos los países al inicio
     fetchCountries: async () => {
         set({ loading: true, error: null });
@@ -60,14 +64,14 @@ export const useCountrieStore = create<CountriesState>((set, get) => ({
             );
         }
 
-        // 🌍 Filtro por región
+        
         if (selectedRegion !== 'all') {
             filtered = filtered.filter((country) => country.region === selectedRegion);
         }
 
         // 🗣️ Filtro por idioma
         if (selectedLanguage !== 'all') {
-            debugger
+           
             filtered = filtered.filter(
                 (country) =>
                 country.languages &&
@@ -79,7 +83,7 @@ export const useCountrieStore = create<CountriesState>((set, get) => ({
             );
         }
 
-        // 📊 Ordenamiento
+       
         switch (sortBy) {
         case 'populationAsc':
             filtered.sort((a, b) => a.population - b.population);
@@ -104,6 +108,25 @@ export const useCountrieStore = create<CountriesState>((set, get) => ({
         loading: false,
         });
     },
+
+    fetchExchangeRates: async (base) => {
+    try {
+        const response = await fetch(`https://api.exchangerate.host/latest?base=${base}`);
+        const data = await response.json();
+
+        if (data && data.rates) {
+        console.log('Tasas recibidas:', data.rates);
+        set({ exchangeRates: data.rates });
+        } else {
+        console.error('La respuesta no contiene tasas de cambio:', data);
+        }
+    } catch (error) {
+        console.error('Error al obtener tasas de cambio:', error);
+    }
+    },
+
+
+
 
     // Limpiar todos los filtros
     resetFilters: () => {
@@ -136,6 +159,11 @@ export const useCountrieStore = create<CountriesState>((set, get) => ({
     searchCountriesByName: (name: string) => {
         set({ searchQuery: name });
         get().applyAllFilters();
+    },
+
+    setCurrency: (currency) => {
+        set({ selectedCurrency: currency });
+        get().fetchExchangeRates(currency);
     },
 
     // Paginación

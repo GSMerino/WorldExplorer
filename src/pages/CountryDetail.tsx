@@ -1,52 +1,36 @@
-// components/CountryDetail.tsx
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Button, CircularProgress, Alert, Box, Typography, Paper, Chip, Stack } from '@mui/material';
+import {
+  Button, CircularProgress, Alert, Box, Typography, Paper, Chip, Stack
+} from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { useCountrieStore } from '../store/countrieStore/useCountrieStore';
 
 interface Country {
   name: {
     common: string;
     official: string;
     nativeName?: {
-      [key: string]: {
-        official: string;
-        common: string;
-      };
+      [key: string]: { official: string; common: string };
     };
   };
   cca3: string;
-  flags: {
-    png: string;
-    svg: string;
-    alt?: string;
-  };
+  flags: { png: string; svg: string; alt?: string };
   capital?: string[];
   region: string;
   subregion?: string;
   population: number;
   currencies?: {
-    [key: string]: {
-      name: string;
-      symbol: string;
-    };
+    [key: string]: { name: string; symbol: string };
   };
-  languages?: {
-    [key: string]: string;
-  };
+  languages?: { [key: string]: string };
   borders?: string[];
   tld?: string[];
   timezones?: string[];
   continents?: string[];
   startOfWeek?: string;
-  car?: {
-    signs?: string[];
-    side: string;
-  };
-  maps?: {
-    googleMaps: string;
-    openStreetMaps: string;
-  };
+  car?: { signs?: string[]; side: string };
+  maps?: { googleMaps: string; openStreetMaps: string };
 }
 
 export const CountryDetail = () => {
@@ -55,6 +39,8 @@ export const CountryDetail = () => {
   const [country, setCountry] = useState<Country | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const { selectedCurrency, exchangeRates, fetchExchangeRates } = useCountrieStore();
 
   useEffect(() => {
     const fetchCountryDetail = async () => {
@@ -68,11 +54,7 @@ export const CountryDetail = () => {
         setLoading(true);
         setError(null);
         const response = await fetch(`https://restcountries.com/v3.1/alpha/${countryCode}`);
-        
-        if (!response.ok) {
-          throw new Error('País no encontrado');
-        }
-        
+        if (!response.ok) throw new Error('País no encontrado');
         const data = await response.json();
         setCountry(data[0]);
       } catch (err) {
@@ -84,6 +66,12 @@ export const CountryDetail = () => {
 
     fetchCountryDetail();
   }, [countryCode]);
+
+  useEffect(() => {
+    if (country && country.currencies) {
+      fetchExchangeRates(selectedCurrency);
+    }
+  }, [country, selectedCurrency]);
 
   if (loading) {
     return (
@@ -97,14 +85,11 @@ export const CountryDetail = () => {
   if (error) {
     return (
       <Box p={3}>
-        <Alert 
-          severity="error" 
-          action={
-            <Button color="inherit" onClick={() => navigate('/')}>
-              Volver
-            </Button>
-          }
-        >
+        <Alert severity="error" action={
+          <Button color="inherit" onClick={() => navigate('/')}>
+            Volver
+          </Button>
+        }>
           {error}
         </Alert>
       </Box>
@@ -114,36 +99,26 @@ export const CountryDetail = () => {
   if (!country) {
     return (
       <Box p={3}>
-        <Alert severity="warning">
-          No se encontró información para este país.
-        </Alert>
+        <Alert severity="warning">No se encontró información para este país.</Alert>
       </Box>
     );
   }
 
   return (
     <Box p={3} maxWidth="1200px" margin="0 auto">
-      {/* Botón de volver */}
-      <Button 
-        startIcon={<ArrowBackIcon />}
-        onClick={() => navigate('/')}
-        variant="outlined"
-        sx={{ mb: 3 }}
-      >
+      <Button startIcon={<ArrowBackIcon />} onClick={() => navigate('/')} variant="outlined" sx={{ mb: 3 }}>
         Volver a la lista de países
       </Button>
 
-      {/* Información principal del país */}
       <Paper elevation={3} sx={{ p: 4 }}>
         <Box display="grid" gridTemplateColumns={{ xs: '1fr', md: '1fr 1fr' }} gap={4}>
-          {/* Columna izquierda - Bandera */}
           <Box>
-            <img 
-              src={country.flags.png} 
+            <img
+              src={country.flags.png}
               alt={country.flags.alt || `Bandera de ${country.name.common}`}
-              style={{ 
-                width: '100%', 
-                maxWidth: '400px', 
+              style={{
+                width: '100%',
+                maxWidth: '400px',
                 height: 'auto',
                 borderRadius: '8px',
                 boxShadow: '0 4px 8px rgba(0,0,0,0.1)'
@@ -151,103 +126,99 @@ export const CountryDetail = () => {
             />
           </Box>
 
-          {/* Columna derecha - Información */}
           <Box>
             <Typography variant="h3" gutterBottom fontWeight="bold">
               {country.name.common}
             </Typography>
-            
             <Typography variant="h6" color="text.secondary" gutterBottom>
               {country.name.official}
             </Typography>
 
-            {/* Información básica */}
             <Stack spacing={2} mt={3}>
               <Box>
-                <Typography variant="body1">
-                  <strong>🌍 Continente:</strong> {country.continents?.[0] || 'N/A'}
-                </Typography>
-                <Typography variant="body1">
-                  <strong>📍 Región:</strong> {country.region} {country.subregion && `- ${country.subregion}`}
-                </Typography>
+                <Typography variant="body1"><strong>🌍 Continente:</strong> {country.continents?.[0] || 'N/A'}</Typography>
+                <Typography variant="body1"><strong>📍 Región:</strong> {country.region} {country.subregion && `- ${country.subregion}`}</Typography>
               </Box>
 
               <Box>
-                <Typography variant="body1">
-                  <strong>👥 Población:</strong> {country.population.toLocaleString()}
-                </Typography>
-                <Typography variant="body1">
-                  <strong>🏛️ Capital:</strong> {country.capital?.[0] || 'N/A'}
-                </Typography>
+                <Typography variant="body1"><strong>👥 Población:</strong> {country.population.toLocaleString()}</Typography>
+                <Typography variant="body1"><strong>🏛️ Capital:</strong> {country.capital?.[0] || 'N/A'}</Typography>
               </Box>
 
-              {/* Monedas */}
               {country.currencies && (
                 <Box>
-                  <Typography variant="body1" gutterBottom>
-                    <strong>💰 Monedas:</strong>
-                  </Typography>
+                  <Typography variant="body1" gutterBottom><strong>💰 Monedas:</strong></Typography>
                   <Stack direction="row" spacing={1} flexWrap="wrap">
                     {Object.entries(country.currencies).map(([code, currency]) => (
-                      <Chip 
-                        key={code}
-                        label={`${currency.name} (${currency.symbol || code})`}
-                        variant="outlined"
-                        size="small"
-                      />
+                      <Chip key={code} label={`${currency.name} (${currency.symbol || code})`} variant="outlined" size="small" />
                     ))}
                   </Stack>
                 </Box>
               )}
 
-              {/* Idiomas */}
+              {country.currencies && exchangeRates && typeof exchangeRates === 'object' && (
+                <Box mt={2}>
+                  <Typography variant="body1" gutterBottom><strong>💱 Conversión de moneda:</strong></Typography>
+                  <Stack direction="row" spacing={1} flexWrap="wrap">
+                    {Object.entries(country.currencies).map(([code]) => {
+                      const localRate = exchangeRates[code];
+                      const targetRate = exchangeRates[selectedCurrency];
+
+                      const rate =
+                        localRate && targetRate
+                          ? selectedCurrency === 'USD'
+                            ? 1 / localRate
+                            : targetRate / localRate
+                          : undefined;
+
+                      return (
+                        <Chip
+                          key={code}
+                          label={
+                            rate
+                              ? `1 ${code} = ${rate.toFixed(2)} ${selectedCurrency}`
+                              : `No disponible para ${code}`
+                          }
+                          variant="filled"
+                          color={rate ? 'primary' : 'default'}
+                          size="small"
+                        />
+                      );
+                    })}
+                  </Stack>
+                </Box>
+              )}
+
               {country.languages && (
                 <Box>
-                  <Typography variant="body1" gutterBottom>
-                    <strong>🗣️ Idiomas:</strong>
-                  </Typography>
+                  <Typography variant="body1" gutterBottom><strong>🗣️ Idiomas:</strong></Typography>
                   <Stack direction="row" spacing={1} flexWrap="wrap">
                     {Object.values(country.languages).map((language, index) => (
-                      <Chip 
-                        key={index}
-                        label={language}
-                        variant="outlined"
-                        size="small"
-                      />
+                      <Chip key={index} label={language} variant="outlined" size="small" />
                     ))}
                   </Stack>
                 </Box>
               )}
 
-              {/* Dominio de internet */}
               {country.tld && (
                 <Box>
-                  <Typography variant="body1">
-                    <strong>🌐 Dominio:</strong> {country.tld.join(', ')}
-                  </Typography>
+                  <Typography variant="body1"><strong>🌐 Dominio:</strong> {country.tld.join(', ')}</Typography>
                 </Box>
               )}
 
-              {/* Zona horaria */}
               {country.timezones && (
                 <Box>
-                  <Typography variant="body1">
-                    <strong>⏰ Zona horaria:</strong> {country.timezones[0]}
-                  </Typography>
+                  <Typography variant="body1"><strong>⏰ Zona horaria:</strong> {country.timezones[0]}</Typography>
                 </Box>
               )}
 
-              {/* Lado de conducción */}
               {country.car && (
                 <Box>
-                  <Typography variant="body1">
-                    <strong>🚗 Conduce por la:</strong> {country.car.side} {country.car.signs && `(${country.car.signs.join(', ')})`}
-                  </Typography>
+                  <Typography variant="body1"><strong>🚗 Conduce por la:</strong> {country.car.side} {country.car.signs && `(${country.car.signs.join(', ')})`}</Typography>
                 </Box>
               )}
             </Stack>
 
-            {/* Enlaces a mapas */}
             {country.maps && (
               <Box mt={3}>
                 <Typography variant="h6" gutterBottom>
@@ -271,18 +242,16 @@ export const CountryDetail = () => {
                 </Stack>
               </Box>
             )}
+
           </Box>
         </Box>
 
-        {/* Países fronterizos */}
         {country.borders && country.borders.length > 0 && (
           <Box mt={4}>
-            <Typography variant="h6" gutterBottom>
-              🚩 Países Fronterizos
-            </Typography>
+            <Typography variant="h6" gutterBottom>🚩 Países Fronterizos</Typography>
             <Stack direction="row" spacing={1} flexWrap="wrap">
               {country.borders.map((borderCode) => (
-                <Chip 
+                <Chip
                   key={borderCode}
                   label={borderCode}
                   variant="outlined"
