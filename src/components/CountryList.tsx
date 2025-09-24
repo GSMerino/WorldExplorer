@@ -105,7 +105,7 @@ export const CountryList = () => {
                 <div className="flex flex-col gap-4">
                     
                     <div>
-                        <div className="w-[45%]">
+                        <div className="w-[40%]">
                             <TextField
                                 value={localSearchQuery}
                                 onChange={(e) => setLocalSearchQuery(e.target.value)}
@@ -119,6 +119,10 @@ export const CountryList = () => {
                                             <SearchIcon />
                                         </InputAdornment>
                                     ),
+                                    sx: {
+                                        padding: '4px 8px', 
+                                        height: '40px',     
+                                    },
                                 }}
                             />
                         </div>
