@@ -56,13 +56,16 @@ export const ChartsPage = () => {
 
 
     return (
-        <Box  sx={{ width: '100%', p: 2, minHeight: '95vh' }} >
-            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                <Tabs value={value} onChange={handleChange} aria-label="Gráficas de países" centered>
-                    <Tab label="Distribución por región" {...a11yProps(0)} />
-                    <Tab label="Top países más poblados" {...a11yProps(1)} />
-                </Tabs>
+        <Box  sx={{ width: '100%', minHeight: '95vh' }} >
+            <Box sx={{p: 2}}>
+                <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                    <Tabs value={value} onChange={handleChange} aria-label="Gráficas de países" centered>
+                        <Tab label="Distribución por región" {...a11yProps(0)} />
+                        <Tab label="Top países más poblados" {...a11yProps(1)} />
+                    </Tabs>
+                </Box>
             </Box>
+
 
             <CustomTabPanel value={value} index={0}>
                 <RegionDistributionChart />
