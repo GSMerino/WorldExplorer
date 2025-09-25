@@ -95,7 +95,7 @@ export const TopPopulationChart = () => {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, ease: 'easeOut' }}
-                className="p-4 max-w-[60%] mx-auto mb-8 bg-[#ffffff] rounded-xl"
+                className="p-4 w-[60%] md:max-w-[60%] lg:max-w-[60%] mx-auto mb-8 bg-[#ffffff] rounded-xl"
             >
                 <h2 className="text-xl font-bold mb-4 text-center">Top 10 países más poblados</h2>
                 <Bar data={chartData} options={options} />

@@ -88,7 +88,7 @@ export interface CountriesState {
    
    
 
-   selectedCurrency: string; // ej. 'USD'
+   selectedCurrency: string; 
    exchangeRates: Record<string, number>; // ej. { EUR: 1.07, MXN: 18.5 }
    fetchExchangeRates: (base: string) => Promise<void>;
    setCurrency: (currency: string) => void;
