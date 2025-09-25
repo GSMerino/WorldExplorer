@@ -13,6 +13,10 @@ export async function getAllCountries(): Promise<Country[]> {
     return response.data;
 }
 
+// export async function  currencyApi ()  {
+//     const response = await
+// }
+
 export async function getCountriesByRegion(region: string): Promise<Country[]> {
     const response = await countriesApi.get<CountriesResponse>(
         `/region/${region}?fields=${FIELDS}`

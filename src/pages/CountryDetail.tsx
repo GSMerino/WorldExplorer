@@ -71,7 +71,7 @@ export const CountryDetail = () => {
 
     useEffect(() => {
         if (country && country.currencies) {
-        fetchExchangeRates(selectedCurrency);
+            fetchExchangeRates(selectedCurrency);
         }
     }, [country, selectedCurrency]);
 
@@ -85,7 +85,7 @@ export const CountryDetail = () => {
                     className='flex flex-col gap-5 justify-center items-center'
                 >
                     <ClipLoader color="#002A52" size={50} />
-                    <p className="text-[#002A52] font-medium text-lg animate-pulse">Preparando gráficas de países...</p>
+                    <p className="text-[#002A52] font-medium text-lg animate-pulse">Cargando...</p>
                 </motion.div>
             </section>
         );

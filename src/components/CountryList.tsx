@@ -24,31 +24,30 @@ export const CountryList = () => {
 
     const navigate = useNavigate();
 
-
-  const {
-    countries,
-    loading,
-    error,
-    currentPage,
-    itemsPerPage,
-    totalPages,
-    selectedRegion,
-    selectedLanguage,
-    sortBy,
-    searchQuery,
-    selectedCurrency,
-
-    getPaginatedCountries,
-    setCurrentPage,
-    setItemsPerPage,
-    setRegion,
-    setLanguage,
-    setSortBy,
-    searchCountriesByName,
-    resetFilters,
-    fetchCountries,
-    setCurrency 
-  } = useCountrieStore();
+    const {
+        countries,
+        loading,
+        error,
+        currentPage,
+        itemsPerPage,
+        totalPages,
+        selectedRegion,
+        selectedLanguage,
+        sortBy,
+        searchQuery,
+        selectedCurrency,
+        
+        getPaginatedCountries,
+        setCurrentPage,
+        setItemsPerPage,
+        setRegion,
+        setLanguage,
+        setSortBy,
+        searchCountriesByName,
+        resetFilters,
+        fetchCountries,
+        setCurrency 
+    } = useCountrieStore();
 
     const [localSearchQuery, setLocalSearchQuery] = useState(searchQuery);
     const debouncedSearchQuery = useDebounceCountry(localSearchQuery, 500);

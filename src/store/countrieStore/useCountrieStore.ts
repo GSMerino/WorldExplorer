@@ -110,19 +110,20 @@ export const useCountrieStore = create<CountriesState>((set, get) => ({
     },
 
     fetchExchangeRates: async (base) => {
-    try {
-        const response = await fetch(`https://api.exchangerate.host/latest?base=${base}`);
-        const data = await response.json();
-
-        if (data && data.rates) {
-        console.log('Tasas recibidas:', data.rates);
-        set({ exchangeRates: data.rates });
-        } else {
-        console.error('La respuesta no contiene tasas de cambio:', data);
+        try {
+            const response = await fetch(`https://api.exchangerate-api.com/v4/latest/${base}`);
+            const data = await response.json();
+            console.log("exchangeRates", data)
+            if (data && data.rates) {
+                console.log('Tasas recibidas:', data.rates);
+                set({ exchangeRates: data.rates });
+            } else {
+                console.error('La respuesta no contiene tasas de cambio:', data);
+            }
+            
+        } catch (error) {
+            console.error('Error al obtener tasas de cambio:', error);
         }
-    } catch (error) {
-        console.error('Error al obtener tasas de cambio:', error);
-    }
     },
 
 
